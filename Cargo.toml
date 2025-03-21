@@ -1,0 +1,26 @@
+[package]
+name = "rust_embed"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name"]
+description = "A pure Rust implementation of embedding algorithms"
+
+[dependencies]
+ndarray = "0.15.6"    # For linear algebra and numerical computing
+ndarray-rand = "0.14.0"  # For random matrix generation
+ndarray-stats = "0.5.1"  # For statistical operations on arrays
+rand = "0.8.5"        # For random number generation
+tokenizers = "0.13.3" # For tokenizing text
+rust-bert = "0.20.0"  # Rust implementation of transformer models
+thiserror = "1.0.40"  # For error handling
+serde = { version = "1.0.152", features = ["derive"] }  # For serialization
+prost = "0.11.8"      # Protocol Buffers implementation for Rust
+bytes = "1.4.0"       # For working with byte arrays
+anyhow = "1.0.69"     # For error handling
+clap = { version = "4.1.8", features = ["derive"] }  # For command-line argument parsing
+env_logger = "0.10.0" # For logging
+log = "0.4.17"        # For logging
+tokio = { version = "1.25.0", features = ["full"] } # For async support
+
+[build-dependencies]
+prost-build = "0.11.8" # For generating Protobuf code

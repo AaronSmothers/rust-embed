@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package embeddings;
+
+// A single embedding vector
+message Embedding {
+  repeated float values = 1 [packed=true];
+  string text = 2;  // Original text (optional)
+  int64 timestamp = 3;  // When the embedding was created
+}
+
+// A collection of embeddings
+message EmbeddingCollection {
+  repeated Embedding embeddings = 1;
+  string model_name = 2;  // Name of the model used
+  string model_version = 3;  // Version of the model
+  int32 dimension = 4;  // Dimension of each embedding vector
+} 
