@@ -101,7 +101,6 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
     
     #[test]
     fn test_embedding() -> Result<()> {
