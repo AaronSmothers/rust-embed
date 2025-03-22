@@ -1,14 +1,28 @@
 # Rust Embeddings
 
-A pure Rust implementation of text embedding algorithms, particularly the all-MiniLM-L6-v2 model.
+> **⚠️ IMPORTANT NOTE:** The release build currently has issues with libtorch library paths. When building with `--release`, you may encounter errors like `Library not loaded: @rpath/libtorch_cpu.dylib` due to missing LC_RPATH entries. For now, use debug builds with `cargo run` which properly sets up the library paths. This issue will be addressed in future releases.
+
+A pure Rust implementation of text embedding algorithms using the all-MiniLM-L6-v2 model from Hugging Face.
 
 ## Features
 
-- Pure Rust implementation of text embedding
+- Integrates the all-MiniLM-L6-v2 model using rust-bert
+- Real embeddings with 384 dimensions that capture semantic meaning
 - Efficient storage using Protocol Buffers
-- Simple interface for embedding text
+- Simple interface for embedding text and computing similarity
 - Optimized for large-scale embedding tasks (supports processing 100GB+ datasets)
 - Command-line interface for easy usage
+
+## Installation
+
+Add this to your Cargo.toml:
+
+```toml
+[dependencies]
+rust_embed = "0.0.1"
+```
+
+Note: This package requires libtorch (PyTorch C++ libraries) to be installed as it uses the tch-rs crate.
 
 ## Usage
 
@@ -16,20 +30,29 @@ A pure Rust implementation of text embedding algorithms, particularly the all-Mi
 
 ```bash
 # Embed a single text
-cargo run -- --text "This is a sample text to embed" --output embeddings.pb
+cargo run --bin rust_embed -- --text "This is a sample text to embed" --output embeddings.pb
 
 # Embed multiple texts from a file (one per line)
-cargo run -- --file input.txt --output embeddings.pb
+cargo run --bin rust_embed -- --file input.txt --output embeddings.pb
+
+# Calculate similarity between a stored embedding and a new text
+cargo run --bin similarity -- --embedding-file embeddings.pb --text "This is a similar text"
 ```
 
 ### As a Library
 
 ```rust
-use rust_embed::{Embedder, MiniLMEmbedder};
+use rust_embed::models::mini_lm::MiniLMEmbedder;
+use rust_embed::embedding::Embedder;
+use anyhow::Result;
 
 fn main() -> Result<()> {
     // Create the embedder
-    let embedder = MiniLMEmbedder::new()?;
+    let mut embedder = MiniLMEmbedder::new();
+    
+    // Load necessary components
+    embedder.load_or_download_tokenizer()?;
+    embedder.load_or_download_model()?;
     
     // Embed a text
     let text = "This is a sample text to embed";
@@ -52,19 +75,40 @@ fn main() -> Result<()> {
 - `src/models/mini_lm/`: Implementation of the all-MiniLM-L6-v2 model
 - `src/utils.rs`: Utility functions for saving/loading embeddings
 - `proto/embeddings.proto`: Protocol Buffers schema for storing embeddings
+- `src/bin/`: Command-line tools for embedding and similarity
 
 ## Performance
 
 This implementation is designed to be efficient for large-scale embedding tasks. For a 106GB dataset, it uses Protocol Buffers to minimize storage requirements and maximize serialization/deserialization speed.
 
+## Dependencies
+
+- rust-bert: Provides the all-MiniLM-L6-v2 model implementation
+- tch: Rust bindings for the PyTorch C++ API
+- tokenizers: High-performance tokenization from Hugging Face
+- ndarray: N-dimensional array manipulation
+- prost: Protocol Buffers implementation for Rust
+
 ## Future Improvements
 
-- [ ] Implement true MiniLM model weights loading
+- [x] ~~Implement true MiniLM model weights loading~~
 - [ ] Add support for more embedding models
 - [ ] Optimize for parallel processing
 - [ ] Add benchmarking tools
 - [ ] Implement retrieval functionality for similarity search
+- [ ] Improve error handling and reporting
+- [ ] Add model caching to avoid reloading for each run
+- [ ] Fix release build issues with libtorch library paths
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under either of:
+
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+
+at your option.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions. 
