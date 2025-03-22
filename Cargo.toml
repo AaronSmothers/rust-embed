@@ -11,7 +11,6 @@ ndarray-rand = "0.14.0"  # For random matrix generation
 ndarray-stats = "0.5.1"  # For statistical operations on arrays
 rand = "0.8.5"        # For random number generation
 tokenizers = "0.13.3" # For tokenizing text
-rust-bert = "0.20.0"  # Rust implementation of transformer models
 thiserror = "1.0.40"  # For error handling
 serde = { version = "1.0.152", features = ["derive"] }  # For serialization
 prost = "0.11.8"      # Protocol Buffers implementation for Rust
@@ -21,6 +20,10 @@ clap = { version = "4.1.8", features = ["derive"] }  # For command-line argument
 env_logger = "0.10.0" # For logging
 log = "0.4.17"        # For logging
 tokio = { version = "1.25.0", features = ["full"] } # For async support
+reqwest = { version = "0.11.18", features = ["blocking", "json"] } # For downloading model files
+dirs = "5.0.1"        # For finding system directories
+tch = { version = "0.13.0", features = ["download-libtorch"] }  # PyTorch bindings for Rust
+rust-bert = "0.21.0"  # Rust implementation of transformers models
 
 [build-dependencies]
 prost-build = "0.11.8" # For generating Protobuf code

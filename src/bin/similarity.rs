@@ -37,7 +37,15 @@ fn main() -> Result<()> {
     }
     
     // Create the MiniLM embedder
-    let embedder = MiniLMEmbedder::new()?;
+    let mut embedder = MiniLMEmbedder::new();
+    
+    // Load the tokenizer and model
+    println!("Loading tokenizer...");
+    embedder.load_or_download_tokenizer()?;
+    
+    println!("Loading model...");
+    embedder.load_or_download_model()?;
+    println!("Using the all-MiniLM-L6-v2 model for generating embeddings.");
     
     // Embed the input text
     println!("Embedding text: {}", args.text);

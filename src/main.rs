@@ -33,7 +33,15 @@ fn main() -> Result<()> {
     let args = Args::parse();
     
     // Create the MiniLM embedder
-    let embedder = MiniLMEmbedder::new()?;
+    let mut embedder = MiniLMEmbedder::new();
+    
+    // Load the tokenizer and model
+    println!("Loading tokenizer...");
+    embedder.load_or_download_tokenizer()?;
+    
+    println!("Loading model...");
+    embedder.load_or_download_model()?;
+    println!("Using the all-MiniLM-L6-v2 model for generating embeddings.");
     
     // Process text based on input source
     if let Some(text) = args.text {
@@ -97,7 +105,9 @@ mod tests {
     
     #[test]
     fn test_embedding() -> Result<()> {
-        let embedder = MiniLMEmbedder::new()?;
+        let mut embedder = MiniLMEmbedder::new();
+        embedder.load_or_download_tokenizer()?;
+        embedder.load_or_download_model()?;
         let text = "This is a test sentence for embedding.";
         let embedding = embedder.embed_text(text)?;
         
@@ -113,7 +123,9 @@ mod tests {
     
     #[test]
     fn test_similarity() -> Result<()> {
-        let embedder = MiniLMEmbedder::new()?;
+        let mut embedder = MiniLMEmbedder::new();
+        embedder.load_or_download_tokenizer()?;
+        embedder.load_or_download_model()?;
         let text1 = "Dogs are pets that bark.";
         let text2 = "Canines are domesticated animals that make barking sounds.";
         let text3 = "Quantum physics explores the nature of subatomic particles.";
@@ -126,10 +138,12 @@ mod tests {
         let sim12 = embedder.cosine_similarity(&emb1, &emb2);
         let sim13 = embedder.cosine_similarity(&emb1, &emb3);
         
-        // Note: Since we're using random vectors instead of real embeddings,
-        // we can't assert specific similarity values in this test
+        // With real embeddings, we can now make assertions about similarity
         println!("Similarity between similar texts: {}", sim12);
         println!("Similarity between different texts: {}", sim13);
+        
+        // Similar texts should have higher similarity than dissimilar texts
+        assert!(sim12 > sim13);
         
         Ok(())
     }
